@@ -1,5 +1,5 @@
 
-"use client"; // Required for useState and event handlers
+"use client"; 
 
 import type { Appointment } from '@/lib/mockData';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -16,18 +16,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CalendarDays, Clock, User, Tag, CheckCircle, XCircle, AlertTriangle, Pencil, Trash2 } from 'lucide-react';
-import Link from 'next/link'; // For the Edit button navigation
-import React from 'react'; // useState might not be needed if AlertDialog handles its own state
+import { CalendarDays, Clock, Tag, CheckCircle, XCircle, AlertTriangle, Pencil, Trash2 } from 'lucide-react';
+import Link from 'next/link'; 
+import React from 'react'; 
 
 interface AppointmentCardProps {
   appointment: Appointment;
   onDelete: (appointmentId: string) => void;
-  onEdit: (appointmentId: string) => void; // Placeholder for edit functionality
+  // onEdit é tratado pelo Link agora
 }
 
 function formatDate(dateString: string) {
-  // Ensure dateString is treated as local by appending time if it's just YYYY-MM-DD
   const date = new Date(dateString.includes('T') ? dateString : `${dateString}T00:00:00`);
   return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
@@ -36,7 +35,7 @@ function formatDate(dateString: string) {
   });
 }
 
-export function AppointmentCard({ appointment, onDelete, onEdit }: AppointmentCardProps) {
+export function AppointmentCard({ appointment, onDelete }: AppointmentCardProps) {
   const getStatusBadgeVariant = (status: Appointment['status']) => {
     switch (status) {
       case 'Confirmado':
@@ -91,7 +90,7 @@ export function AppointmentCard({ appointment, onDelete, onEdit }: AppointmentCa
       </CardContent>
       <CardFooter className="flex justify-end space-x-2 p-4 pt-0">
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/my-appointments/edit/${appointment.id}`}>
+          <Link href={`/professionals/${appointment.professionalId}/schedule?edit=${appointment.id}`}>
             <Pencil className="mr-1 h-3 w-3" /> Editar
           </Link>
         </Button>

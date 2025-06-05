@@ -18,7 +18,7 @@ export interface Professional {
     email: string;
     phone: string;
   };
-  icon?: LucideIcon; // Optional: for specialty icon
+  icon?: LucideIcon; 
 }
 
 export interface Appointment {
@@ -26,7 +26,7 @@ export interface Appointment {
   professionalId: string;
   professionalName: string;
   specialty: string;
-  date: string; // Store as ISO string or YYYY-MM-DD
+  date: string; 
   time: string;
   status: 'Confirmado' | 'Pendente' | 'Cancelado';
 }
@@ -99,7 +99,6 @@ export const professionals: Professional[] = [
   },
 ];
 
-// Mutable array for appointments
 export let appointments: Appointment[] = [
   {
     id: 'appt1',
@@ -134,10 +133,11 @@ export const getProfessionalById = (id: string): Professional | undefined => {
   return professionals.find(p => p.id === id);
 };
 
+export const getAppointmentById = (id: string): Appointment | undefined => {
+  return appointments.find(a => a.id === id);
+};
+
 export const getUserAppointments = (): Appointment[] => {
-  // In a real app, this would be filtered by user ID
-  // For mock purposes, return a copy to prevent direct mutation of the original array by consumers
-  // if they don't use the provided CRUD functions.
   return [...appointments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
@@ -145,7 +145,7 @@ export interface NewAppointmentData {
   professionalId: string;
   professionalName: string;
   specialty: string;
-  date: string; // YYYY-MM-DD string
+  date: string; 
   time: string;
 }
 
@@ -154,19 +154,15 @@ export function addAppointment(data: NewAppointmentData): Appointment {
   const newAppointment: Appointment = {
     id: newId,
     ...data,
-    status: 'Pendente', // Default status for new bookings
+    status: 'Pendente', 
   };
   appointments.push(newAppointment);
-  console.log('Appointment added:', newAppointment);
-  console.log('Current appointments:', appointments);
   return newAppointment;
 }
 
 export function deleteAppointment(appointmentId: string): boolean {
   const initialLength = appointments.length;
   appointments = appointments.filter(a => a.id !== appointmentId);
-  console.log('Appointment deleted:', appointmentId);
-  console.log('Current appointments:', appointments);
   return appointments.length < initialLength;
 }
 
@@ -174,16 +170,23 @@ export interface AppointmentUpdateData {
   date?: string;
   time?: string;
   status?: 'Confirmado' | 'Pendente' | 'Cancelado';
-  // Add other editable fields as needed
 }
 
 export function updateAppointment(appointmentId: string, updates: AppointmentUpdateData): Appointment | undefined {
   const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
   if (appointmentIndex > -1) {
-    appointments[appointmentIndex] = { ...appointments[appointmentIndex], ...updates };
-    console.log('Appointment updated:', appointments[appointmentIndex]);
+    // Merge updates, and if date/time changes, set status to 'Pendente'
+    const originalAppointment = appointments[appointmentIndex];
+    const newStatus = (updates.date || updates.time) && (updates.date !== originalAppointment.date || updates.time !== originalAppointment.time)
+      ? 'Pendente' 
+      : updates.status || originalAppointment.status;
+
+    appointments[appointmentIndex] = { 
+      ...originalAppointment, 
+      ...updates,
+      status: newStatus
+    };
     return appointments[appointmentIndex];
   }
-  console.log('Appointment not found for update:', appointmentId);
   return undefined;
 }

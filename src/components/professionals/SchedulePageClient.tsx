@@ -7,16 +7,20 @@ import { BookingForm } from '@/components/appointments/BookingForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays } from 'lucide-react';
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 
 interface SchedulePageClientProps {
   professional: Professional;
 }
 
 export function SchedulePageClient({ professional }: SchedulePageClientProps) {
+  const searchParams = useSearchParams();
+  const editingAppointmentId = searchParams.get('edit') || undefined;
+
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
       <div className="lg:col-span-1 space-y-6">
-        <Card className="shadow-lg sticky top-24"> {/* Added sticky top for better UX on scroll */}
+        <Card className="shadow-lg sticky top-24">
           <CardHeader className="items-center text-center p-6">
             <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-card shadow-md mb-4">
               <Image
@@ -50,7 +54,7 @@ export function SchedulePageClient({ professional }: SchedulePageClientProps) {
       </div>
 
       <div className="lg:col-span-2">
-        <BookingForm professional={professional} />
+        <BookingForm professional={professional} editingAppointmentId={editingAppointmentId} />
       </div>
     </div>
   );
