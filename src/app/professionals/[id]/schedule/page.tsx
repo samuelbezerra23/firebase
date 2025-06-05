@@ -1,3 +1,4 @@
+
 import { getProfessionalById, type Professional } from '@/lib/mockData';
 import { SchedulePageClient } from '@/components/professionals/SchedulePageClient';
 import { notFound } from 'next/navigation';
