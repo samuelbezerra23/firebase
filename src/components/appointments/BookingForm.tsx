@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -6,21 +7,24 @@ import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from "@/hooks/use-toast";
 import type { Professional } from '@/lib/mockData';
+import { addAppointment, type NewAppointmentData } from '@/lib/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input'; // For patient name
+import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation'; // Import useRouter for navigation
 
 export function BookingForm({ professional }: { professional: Professional }) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
-  const [patientName, setPatientName] = useState<string>(""); // Example field for patient name
+  const [patientName, setPatientName] = useState<string>("");
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const { toast } = useToast();
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     if (selectedDate) {
       const dayOfWeek = selectedDate.toLocaleDateString('pt-BR', { weekday: 'long' });
-      const formattedDay = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).replace('-feira', '-feira'); // Ensure "Segunda-feira" format
+      const formattedDay = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).replace('-feira', '-feira');
       const daySchedule = professional.availability.find(a => a.day === formattedDay);
       setAvailableSlots(daySchedule ? daySchedule.timeSlots : []);
       setSelectedTime(undefined); 
@@ -40,29 +44,41 @@ export function BookingForm({ professional }: { professional: Professional }) {
       return;
     }
 
-    // Mock booking logic (e.g., save to localStorage or send to API)
-    console.log({
+    const appointmentData: NewAppointmentData = {
       professionalId: professional.id,
       professionalName: professional.name,
-      date: selectedDate.toISOString().split('T')[0],
+      specialty: professional.specialty,
+      date: selectedDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
       time: selectedTime,
-      patientName,
-    });
+    };
 
-    toast({
-      title: "Agendamento Confirmado!",
-      description: `${patientName}, sua consulta com ${professional.name} em ${selectedDate.toLocaleDateString('pt-BR')} às ${selectedTime} foi solicitada.`,
-      className: "bg-accent text-accent-foreground", // Using accent for success toast
-    });
-    
-    setSelectedDate(undefined);
-    setSelectedTime(undefined);
-    setPatientName("");
+    try {
+      addAppointment(appointmentData);
+      toast({
+        title: "Agendamento Solicitado!",
+        description: `${patientName}, sua consulta com ${professional.name} em ${selectedDate.toLocaleDateString('pt-BR')} às ${selectedTime} foi solicitada e está pendente de confirmação.`,
+        className: "bg-accent text-accent-foreground",
+      });
+      
+      setSelectedDate(undefined);
+      setSelectedTime(undefined);
+      setPatientName("");
+      
+      // Optionally navigate to "My Appointments" page
+      router.push('/my-appointments');
+
+    } catch (error) {
+      console.error("Failed to add appointment:", error);
+      toast({
+        title: "Erro no Servidor",
+        description: "Não foi possível salvar o agendamento. Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
   
   const today = new Date();
   today.setHours(0,0,0,0);
-
 
   return (
     <Card className="shadow-lg">

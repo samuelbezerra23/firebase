@@ -1,25 +1,46 @@
+
+"use client"; // Required for useState and event handlers
+
 import type { Appointment } from '@/lib/mockData';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Clock, User, Tag, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { CalendarDays, Clock, User, Tag, CheckCircle, XCircle, AlertTriangle, Pencil, Trash2 } from 'lucide-react';
+import Link from 'next/link'; // For the Edit button navigation
+import React from 'react'; // useState might not be needed if AlertDialog handles its own state
 
 interface AppointmentCardProps {
   appointment: Appointment;
+  onDelete: (appointmentId: string) => void;
+  onEdit: (appointmentId: string) => void; // Placeholder for edit functionality
 }
 
 function formatDate(dateString: string) {
-  return new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR', { // Add T00:00:00 to avoid timezone issues if date is just YYYY-MM-DD
+  // Ensure dateString is treated as local by appending time if it's just YYYY-MM-DD
+  const date = new Date(dateString.includes('T') ? dateString : `${dateString}T00:00:00`);
+  return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
   });
 }
 
-export function AppointmentCard({ appointment }: AppointmentCardProps) {
+export function AppointmentCard({ appointment, onDelete, onEdit }: AppointmentCardProps) {
   const getStatusBadgeVariant = (status: Appointment['status']) => {
     switch (status) {
       case 'Confirmado':
-        return 'default'; // Will use primary color by default for Badge
+        return 'default'; 
       case 'Pendente':
         return 'secondary';
       case 'Cancelado':
@@ -68,6 +89,34 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
           <span>Horário: {appointment.time}</span>
         </div>
       </CardContent>
+      <CardFooter className="flex justify-end space-x-2 p-4 pt-0">
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/my-appointments/edit/${appointment.id}`}>
+            <Pencil className="mr-1 h-3 w-3" /> Editar
+          </Link>
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm">
+              <Trash2 className="mr-1 h-3 w-3" /> Excluir
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Você tem certeza que deseja excluir este agendamento com {appointment.professionalName} em {formatDate(appointment.date)} às {appointment.time}? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => onDelete(appointment.id)}>
+                Confirmar Exclusão
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardFooter>
     </Card>
   );
 }

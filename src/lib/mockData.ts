@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export interface ProfessionalAvailability {
@@ -98,7 +99,8 @@ export const professionals: Professional[] = [
   },
 ];
 
-export const appointments: Appointment[] = [
+// Mutable array for appointments
+export let appointments: Appointment[] = [
   {
     id: 'appt1',
     professionalId: '1',
@@ -134,5 +136,54 @@ export const getProfessionalById = (id: string): Professional | undefined => {
 
 export const getUserAppointments = (): Appointment[] => {
   // In a real app, this would be filtered by user ID
-  return appointments;
+  // For mock purposes, return a copy to prevent direct mutation of the original array by consumers
+  // if they don't use the provided CRUD functions.
+  return [...appointments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
+
+export interface NewAppointmentData {
+  professionalId: string;
+  professionalName: string;
+  specialty: string;
+  date: string; // YYYY-MM-DD string
+  time: string;
+}
+
+export function addAppointment(data: NewAppointmentData): Appointment {
+  const newId = `appt${appointments.length + 1}_${Date.now()}`;
+  const newAppointment: Appointment = {
+    id: newId,
+    ...data,
+    status: 'Pendente', // Default status for new bookings
+  };
+  appointments.push(newAppointment);
+  console.log('Appointment added:', newAppointment);
+  console.log('Current appointments:', appointments);
+  return newAppointment;
+}
+
+export function deleteAppointment(appointmentId: string): boolean {
+  const initialLength = appointments.length;
+  appointments = appointments.filter(a => a.id !== appointmentId);
+  console.log('Appointment deleted:', appointmentId);
+  console.log('Current appointments:', appointments);
+  return appointments.length < initialLength;
+}
+
+export interface AppointmentUpdateData {
+  date?: string;
+  time?: string;
+  status?: 'Confirmado' | 'Pendente' | 'Cancelado';
+  // Add other editable fields as needed
+}
+
+export function updateAppointment(appointmentId: string, updates: AppointmentUpdateData): Appointment | undefined {
+  const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
+  if (appointmentIndex > -1) {
+    appointments[appointmentIndex] = { ...appointments[appointmentIndex], ...updates };
+    console.log('Appointment updated:', appointments[appointmentIndex]);
+    return appointments[appointmentIndex];
+  }
+  console.log('Appointment not found for update:', appointmentId);
+  return undefined;
+}
