@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: ProfessionalPageProps) {
     return { title: 'Profissional Não Encontrado' };
   }
   return {
-    title: `${professional.name} - ${professional.specialty} | Comunidade Ativa`,
-    description: `Veja o perfil de ${professional.name}, ${professional.specialty}, e agende uma consulta.`,
+    title: `Perfil de ${professional.name} - ${professional.specialty} | Comunidade Ativa`,
+    description: `Veja o perfil completo de ${professional.name}, ${professional.specialty}, suas experiências e informações de contato.`,
   };
 }
 

@@ -4,7 +4,7 @@ import type { Professional } from '@/lib/mockData';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CalendarCheck } from 'lucide-react';
 
 interface ProfessionalCardProps {
   professional: Professional;
@@ -31,11 +31,16 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
           {professional.description}
         </p>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
-        <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+      <CardFooter className="p-6 pt-0 grid grid-cols-2 gap-2">
+        <Button asChild variant="outline" className="w-full">
           <Link href={`/professionals/${professional.id}`}>
-            Ver Perfil e Agendar
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Ver Perfil
+          </Link>
+        </Button>
+        <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+          <Link href={`/professionals/${professional.id}/schedule`}>
+            Agendar
+            <CalendarCheck className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardFooter>

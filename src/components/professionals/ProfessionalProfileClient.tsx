@@ -1,12 +1,13 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 import type { Professional } from '@/lib/mockData';
-import { BookingForm } from '@/components/appointments/BookingForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Mail, Phone, CalendarDays, Info, UserCircle, Briefcase } from 'lucide-react';
+import { Mail, Phone, Info, UserCircle, Briefcase, CalendarCheck } from 'lucide-react';
 
 interface ProfessionalProfileClientProps {
   professional: Professional;
@@ -20,7 +21,7 @@ export function ProfessionalProfileClient({ professional }: ProfessionalProfileC
           <div className="bg-gradient-to-r from-primary/20 to-accent/20 p-8 flex flex-col md:flex-row items-center gap-6">
             <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-card shadow-md">
               <Image
-                src={professional.photoUrl} // Potentially a larger version for profile
+                src={professional.photoUrl} 
                 alt={professional.name}
                 layout="fill"
                 objectFit="cover"
@@ -35,12 +36,9 @@ export function ProfessionalProfileClient({ professional }: ProfessionalProfileC
         </CardHeader>
         <CardContent className="p-6">
           <Tabs defaultValue="about" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="about" className="text-sm md:text-base">
                 <UserCircle className="mr-2 h-4 w-4" /> Sobre
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="text-sm md:text-base">
-                <CalendarDays className="mr-2 h-4 w-4" /> Horários e Agendamento
               </TabsTrigger>
                <TabsTrigger value="contact" className="text-sm md:text-base">
                 <Mail className="mr-2 h-4 w-4" /> Contato
@@ -65,24 +63,6 @@ export function ProfessionalProfileClient({ professional }: ProfessionalProfileC
                 </ul>
               </div>
             </TabsContent>
-
-            <TabsContent value="schedule" className="space-y-6">
-              <div>
-                <h3 className="text-xl font-semibold font-headline text-foreground mb-2">Horários Disponíveis</h3>
-                {professional.availability.length > 0 ? (
-                  <ul className="space-y-2 text-muted-foreground">
-                    {professional.availability.map(avail => (
-                      <li key={avail.day}>
-                        <strong>{avail.day}:</strong> {avail.timeSlots.join(', ')}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-muted-foreground">Este profissional não possui horários cadastrados no momento.</p>
-                )}
-              </div>
-              <BookingForm professional={professional} />
-            </TabsContent>
             
             <TabsContent value="contact" className="space-y-4">
               <h3 className="text-xl font-semibold font-headline text-foreground">Informações de Contato</h3>
@@ -96,6 +76,14 @@ export function ProfessionalProfileClient({ professional }: ProfessionalProfileC
               </div>
             </TabsContent>
           </Tabs>
+          <div className="mt-8 text-center">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Link href={`/professionals/${professional.id}/schedule`}>
+                Agendar Consulta com {professional.name}
+                <CalendarCheck className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
