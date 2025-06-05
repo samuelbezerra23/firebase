@@ -6,18 +6,14 @@ import { AppointmentList } from '@/components/appointments/AppointmentList';
 import { getUserAppointments, deleteAppointment as deleteAppointmentFromMock, type Appointment } from '@/lib/mockData';
 import { useToast } from "@/hooks/use-toast";
 
-// Metadata can still be exported from a client component file in Next.js 13+ App Router
-// but it's often cleaner to keep it separate or ensure it's static.
-// For simplicity here, we'll keep it.
-export const metadata = {
-  title: 'Meus Agendamentos | Comunidade Ativa',
-  description: 'Consulte e gerencie seus agendamentos de saúde.',
-};
-
 export default function MyAppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    document.title = 'Meus Agendamentos | Comunidade Ativa';
+  }, []);
 
   const fetchAppointments = useCallback(() => {
     setIsLoading(true);
