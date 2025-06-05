@@ -46,8 +46,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // useEffect and its direct import have been removed from here.
-  // The PWAInstaller component now handles Service Worker registration.
   return (
     <html lang="pt-BR">
       <head>
