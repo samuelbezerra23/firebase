@@ -7,6 +7,19 @@ export const metadata: Metadata = {
   title: 'Comunidade Ativa',
   description: 'Plataforma de agendamento de saúde.',
   manifest: '/manifest.json', // Link to the manifest file
+  themeColor: '#77B5FE', // Moved theme-color here
+  icons: {
+    icon: [ // For favicons
+      { url: 'https://placehold.co/32x32.png', sizes: '32x32', type: 'image/png', 'data-ai-hint': 'favicon' },
+      { url: 'https://placehold.co/16x16.png', sizes: '16x16', type: 'image/png', 'data-ai-hint': 'favicon' },
+    ],
+    apple: [ // For apple-touch-icon
+      // Note: data-ai-hint might not be officially supported here but keeping for consistency if it doesn't break
+      { url: 'https://placehold.co/180x180.png', 'data-ai-hint': 'app icon' },
+      { url: 'https://placehold.co/152x152.png', sizes: '152x152', 'data-ai-hint': 'app icon' },
+      { url: 'https://placehold.co/167x167.png', sizes: '167x167', 'data-ai-hint': 'app icon' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -29,20 +42,10 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
-        <meta name="msapplication-TileColor" content="#77B5FE" />
+        <meta name="msapplication-TileColor" content="#77B5FE" /> {/* Kept for Windows compatibility */}
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#77B5FE" />
-
-        {/* Add to home screen for Safari on iOS */}
-        <link rel="apple-touch-icon" href="https://placehold.co/180x180.png" data-ai-hint="app icon" />
-        <link rel="apple-touch-icon" sizes="152x152" href="https://placehold.co/152x152.png" data-ai-hint="app icon" />
-        <link rel="apple-touch-icon" sizes="180x180" href="https://placehold.co/180x180.png" data-ai-hint="app icon" />
-        <link rel="apple-touch-icon" sizes="167x167" href="https://placehold.co/167x167.png" data-ai-hint="app icon" />
         
-        {/* Consider adding more specific icons for different resolutions if needed */}
-        <link rel="icon" type="image/png" sizes="32x32" href="https://placehold.co/32x32.png" data-ai-hint="favicon" />
-        <link rel="icon" type="image/png" sizes="16x16" href="https://placehold.co/16x16.png" data-ai-hint="favicon" />
-        
+        {/* mask-icon remains here as it's specific */}
         <link rel="mask-icon" href="https://placehold.co/512x512.png" color="#77B5FE" data-ai-hint="app icon" />
 
       </head>
